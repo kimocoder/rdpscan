@@ -3,8 +3,10 @@
 [![Linux download](/badges/source-linux.svg)](https://github.com/robertdavidgraham/rdpscan/archive/v0.0.2.zip)
 [![Follow](/badges/erratarob.svg)](https://twitter.com/intent/follow?screen_name=erratarob)
 
-# rdpscan for CVE-2019-0708 scanner/checker for bluekeep vuln.
-# PoC with kernel crash and more added to "PoC" folder.
+# CVE-2019-0708 - dubbed "bluekeep"
+
+## rdpscan for scanner/checker for bluekeep vuln.
+## exploit (PoC) with kernel crash and more added to the "PoC" folder.
 
 The exploit itself (with impacket dependency is in the "PoC" folder. enjoy!
 
