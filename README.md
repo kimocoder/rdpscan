@@ -3,9 +3,12 @@
 [![Linux download](/badges/source-linux.svg)](https://github.com/robertdavidgraham/rdpscan/archive/v0.0.2.zip)
 [![Follow](/badges/erratarob.svg)](https://twitter.com/intent/follow?screen_name=erratarob)
 
-# rdpscan for CVE-2019-0708 bluekeep vuln
+# rdpscan for CVE-2019-0708 scanner/checker for bluekeep vuln.
+# PoC with kernel crash and more added to "PoC" folder.
 
-This is a quick-and-dirty scanner for the CVE-2019-0708 vulnerability in Microsoft Remote Desktop.
+The exploit itself (with impacket dependency is in the "PoC" folder. enjoy!
+
+rdpscan is a quick-and-dirty scanner for the CVE-2019-0708 vulnerability in Microsoft Remote Desktop.
 Right now, there are about 900,000 machines on the public Internet vulnerable to this vulnerability,
 so many are expect a worm soon like WannaCry and notPetya. Therefore, scan your networks and
 patch (or at least, enable NLA) on vulnerable systems.
