@@ -1,6 +1,6 @@
-[![Windows download](/badges/binary-windows.svg)](https://github.com/robertdavidgraham/rdpscan/files/3242730/rdpscan-windows.zip)
-[![macOS download](/badges/binary-macos.svg)](https://github.com/robertdavidgraham/rdpscan/files/3240236/rdpscan-macos.zip)
-[![Linux download](/badges/source-linux.svg)](https://github.com/robertdavidgraham/rdpscan/archive/v0.0.2.zip)
+[![Windows download](/badges/binary-windows.svg)](https://github.com/kimocoder/rdpscan/files/3242730/rdpscan-windows.zip)
+[![macOS download](/badges/binary-macos.svg)](https://github.com/kimocoder/rdpscan/files/3240236/rdpscan-macos.zip)
+[![Linux download](/badges/source-linux.svg)](https://github.com/kimocoder/rdpscan/archive/v0.0.5.zip)
 [![Follow](/badges/kimocoder.svg)](https://twitter.com/intent/follow?screen_name=kimocoder)
 
 # CVE-2019-0708 - dubbed "bluekeep"
