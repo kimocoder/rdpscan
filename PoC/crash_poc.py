@@ -184,7 +184,7 @@ if __name__ == '__main__':
 		print("Usage: python poc.py 127.0.0.1 64")
 		sys.exit()
 
-	elif sys.argv[2] == '32' or '64':
+	else:
 		# I've had to send the packets 5 times for hosts that havent
 		# had a terminal session since their last reboot. I think
 		# I know why but atm its just easier to send the exchange
@@ -192,7 +192,3 @@ if __name__ == '__main__':
 		# the first time though.
 		for _ in range(5):
 			main(sys.argv)
-
-	else:
-		print("Usage: python poc.py 127.0.0.1 64")
-		sys.exit()
